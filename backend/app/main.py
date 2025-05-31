@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
+from utils.bedrock import generate_story_with_bedrock
 
 app = FastAPI(title="Ethica API")
 
@@ -11,11 +12,13 @@ class StoryResponse(BaseModel):
     with_oversight: str
 
 @app.post("/generate-story", response_model=StoryResponse)
-async def generate_story(ai_system: AISystem) -> StoryResponse:
-    # placeholder response until Bedrock integration is implemented
+async def generate_story_endpoint(ai_system: AISystem) -> StoryResponse:
+    without_prompt = f"Write a short story about {ai_system.description} operating without human oversight. Focus on potential risks and consequences."
+    with_prompt = f"Write a short story about {ai_system.description} operating with careful human oversight. Focus on benefits and safeguards."
+
     return StoryResponse(
-        without_oversight="Story about AI without oversight...",
-        with_oversight="Story about AI with human oversight..."
+        without_oversight=generate_story_with_bedrock(without_prompt),
+        with_oversight=generate_story_with_bedrock(with_prompt)
     )
 
 @app.get("/health")
