@@ -21,3 +21,14 @@ async def generate_story(ai_system: AISystem) -> StoryResponse:
 @app.get("/health")
 async def health_check():
     return {"status": "healthy"}
+
+@app.get("/")
+async def root():
+    return {
+        "message": "Welcome to the Ethica API",
+        "endpoints": {
+            "health": "/health",
+            "generate_story": "/generate-story",
+            "docs": "/docs"
+        }
+    }
